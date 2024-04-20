@@ -1,17 +1,12 @@
 package ru.netology;
 
 import TestsData.DataGenerator;
-import com.codeborne.selenide.Condition;
-import com.github.javafaker.Faker;
-import dev.failsafe.internal.util.Durations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.Keys;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -45,23 +40,19 @@ public class Tests {
         var secondMeetingDate = DataGenerator.generateDate(daysToAddForSecondMeeting);
 
         $(citySelector).setValue(validUser.getCity());
-        $(dateSelector).doubleClick().setValue(firstMeetingDate);
+        $(dateSelector).doubleClick().sendKeys(Keys.BACK_SPACE);
+        $(dateSelector).setValue(firstMeetingDate);
         $(nameSelector).setValue(validUser.getName());
         $(phoneSelector).setValue(validUser.getPhone());
         $(agreementSelector).click();
         $(buttonSelector).click();
-        $("[data-test-id='success-notification'] .notification__title").shouldBe(visible, Duration.ofSeconds(15));
-        $(successSelector).shouldBe(visible).shouldHave(text("Встреча успешно запланирована на " + firstMeetingDate));
-        $(dateSelector).doubleClick().setValue(secondMeetingDate);
+        $(successSelector).shouldBe(visible, Duration.ofSeconds(15)).shouldHave(text("Встреча успешно запланирована на " + firstMeetingDate));
+        $(dateSelector).doubleClick().sendKeys(Keys.BACK_SPACE);
+        $(dateSelector).setValue(secondMeetingDate);
         $(buttonSelector).click();
         $(rePlanSelector).shouldBe(visible).shouldHave(text("Необходимо подтверждение"));
         $(buttonRePlanSelector).click();
-        $(successSelector).shouldBe(visible, Duration.ofSeconds(5)).shouldHave(text("Встреча успешно запланирована на " + secondMeetingDate));
-        // TODO: добавить логику теста в рамках которого будет выполнено планирование и перепланирование встречи.
-        // Для заполнения полей формы можно использовать пользователя validUser и строки с датами в переменных
-        // firstMeetingDate и secondMeetingDate. Можно также вызывать методы generateCity(locale),
-        // generateName(locale), generatePhone(locale) для генерации и получения в тесте соответственно города,
-        // имени и номера телефона без создания пользователя в методе generateUser(String locale) в датагенераторе
+        $(successSelector).shouldBe(visible, Duration.ofSeconds(15)).shouldHave(text("Встреча успешно запланирована на " + secondMeetingDate));
     }
 
 }
